@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.1" client="site" method="upgrade">
+  <name>mod_downloads</name>
+  <author>CodeChap</author>
+  <creationDate>July 2016</creationDate>
+  <copyright>Copyright (C) 2005 - 2016 Open Source Matters. All rights reserved.</copyright>
+  <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+  <authorEmail>hello@codechap.com</authorEmail>
+  <authorUrl>http://codechap.com</authorUrl>
+  <version>3.0.0</version>
+  <description>Allows a user to download a file after capturing email details</description>
+
+  <files>
+    <filename module="mod_custom">mod_downloads.php</filename>
+  </files>
+
+  <config>
+    <fields name="params">
+      <fieldset name="basic" label="Details">
+        <field
+          name="folder"
+          type="folderlist"
+          label="Downloadable files"
+          description="Folder of where the files are downloaded from."
+          directory="images"
+          required="required"
+        />
+        <field 
+          name="category" 
+          type="category" 
+          extension="com_content" 
+          label="Select a category" 
+          description="Select the category this module shows up on" />
+      </fieldset>
+
+    </fields>
+  </config>
+</extension>
