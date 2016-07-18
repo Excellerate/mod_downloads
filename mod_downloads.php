@@ -19,6 +19,7 @@ use Fuel\Validation\Validator;
 $filter   = $params->get('types', array('.pdf', '.docx', '.xlsx', '.pptx', '.doc', '.xls', '.ppt'));
 $folder   = $params->get('folder');
 $category = $params->get('category', 0);
+$catignore = $params->get('catignore', 0);
 
 // Default Variables
 $catid = false;
@@ -33,9 +34,11 @@ if(JRequest::getVar('option')=='com_content'){
   }
 }
 
-// This module may only display on a selected category
+// This module may only display on a selected category, unless categories are ignored
 if($catid != $category){
-  return null;
+  if($catignore == 0){
+    //return null;
+  }
 }
 
 // Load vendor and helper files
@@ -50,7 +53,7 @@ $filter = implode('|', $filter);
 if(file_exists($path)){
 
   // Include required js and css files
-  JHtml::_('jquery.framework');
+  //JHtml::_('jquery.framework');
   $doc = JFactory::getDocument();
   $doc->addScript('modules/mod_downloads/assets/js/actions.js');
   //$doc->addScript('https://www.google.com/recaptcha/api.js');
