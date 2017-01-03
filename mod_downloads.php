@@ -16,34 +16,13 @@ defined('_JEXEC') or die;
 use Fuel\Validation\Validator;
 
 // Settings
-$filter   = $params->get('types', array('.pdf', '.docx', '.xlsx', '.pptx', '.doc', '.xls', '.ppt'));
-$folder   = $params->get('folder');
-$category = $params->get('category', 0);
-$catignore = $params->get('catignore', 0);
-
-// Default Variables
-$catid = false;
-
-// Find current category ID
-if(JRequest::getVar('option')=='com_content'){
-  if(JRequest::getVar('view')=='article'){
-    $catid = JRequest::getInt('catid');
-  }
-  elseif(JRequest::getVar('view')=='category'){
-    $catid = JRequest::getInt('id');
-  }
-}
-
-// This module may only display on a selected category, unless categories are ignored
-if($catid != $category){
-  if($catignore == 0){
-    //return null;
-  }
-}
+$filter = $params->get('types', array('.pdf', '.docx', '.xlsx', '.pptx', '.doc', '.xls', '.ppt'));
+$folder = $params->get('folder');
+$text   = $params->get('text');
 
 // Load vendor and helper files
-include 'vendor/autoload.php';
-include 'helpers/db.php';
+include 'libraries/vendor/autoload.php';
+include 'helpers/database.php';
 
 // Gather file list
 $path = 'images'.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
@@ -53,11 +32,8 @@ $filter = implode('|', $filter);
 if(file_exists($path)){
 
   // Include required js and css files
-  //JHtml::_('jquery.framework');
   $doc = JFactory::getDocument();
   $doc->addScript('modules/mod_downloads/assets/js/actions.js');
-  //$doc->addScript('https://www.google.com/recaptcha/api.js');
-  //$doc->addStyleSheet('components/com_downloads/assets/css/download.css');
 
   // Joomla doesn't autoload JFile and JFolder
   JLoader::register('JFolder', JPATH_LIBRARIES . '/joomla/filesystem/folder.php');
@@ -74,12 +50,21 @@ if(file_exists($path)){
   }
 
   // Check for post data
-  if($post = JRequest::getVar('email', false, 'post')){
+  if($email = JRequest::getVar('email', false, 'post')){
 
     // Check honeypot
     if( ! empty($_POST['birthday']) ){
       return true;
     }
+
+    // Save to database
+    DownloadsHelperDatabase::save(
+      array(
+        'name'     => JRequest::getVar('name', false, 'post'),
+        'email'    => JRequest::getVar('email', false, 'post'),
+        'filename' => JRequest::getVar('filename', false, 'post')
+      )
+    );
 
     // Validate email
     if(filter_var(JRequest::getVar('email'), FILTER_VALIDATE_EMAIL) === false){

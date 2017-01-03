@@ -48,3 +48,5 @@
   <tfoot>
   </tfoot>
 </table>
+
+<p><?= $text; ?></p>

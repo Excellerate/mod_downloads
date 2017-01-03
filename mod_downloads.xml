@@ -25,18 +25,11 @@
           directory="images"
           required="required"
         />
-        <field 
-          name="category" 
-          type="category" 
-          extension="com_content" 
-          label="Select a category" 
-          description="Select the category this module shows up on"
-        />
-        <field 
-          name="catignore" 
-          type="checkbox" 
-          label="Ingore category" 
-          description="Dont worry about categories"
+        <field
+          name="text"
+          type="textarea"
+          label="Text"
+          description="Text below downloads"
         />
       </fieldset>
     </fields>
