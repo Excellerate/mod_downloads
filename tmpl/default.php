@@ -6,7 +6,7 @@
   </div>
   <div class="image content">
     <div class="description">
-      <form id="downloadRequestForm" class="ui form" action="<?=JURI::current();?>" method="post" target="_blank">
+      <form id="downloadRequestForm" class="ui form" action="<?= $uri; ?>" method="post" target="_blank">
         <div class="ui two column grid">
           <div class="column">
             <div class="ui required field">
@@ -34,7 +34,7 @@
   <thead>
   <tr>
     <th>File</th>
-    <th>Size</th>
+    <th class="ui collapsing cell">Size</th>
   </tr>
   </thead>
   <tbody>

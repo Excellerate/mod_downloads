@@ -35,6 +35,9 @@ if(file_exists($path)){
   $doc = JFactory::getDocument();
   $doc->addScript('modules/mod_downloads/assets/js/actions.js');
 
+  // Find current full url
+  $uri = JUri::getInstance() and $uri = $uri->toString();
+
   // Joomla doesn't autoload JFile and JFolder
   JLoader::register('JFolder', JPATH_LIBRARIES . '/joomla/filesystem/folder.php');
   
