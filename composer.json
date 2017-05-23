@@ -1,0 +1,8 @@
+{
+    "name": "excellerate/mod_downloads",
+    "type": "joomla-module",
+    "description": "A download module for Joomla",
+    "require": {
+        "composer/installers": "*"
+    }
+}
