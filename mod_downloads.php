@@ -28,13 +28,14 @@ include_once 'helpers/format.php';
 // Gather file list
 $path = 'images'.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
 $filter = implode('|', $filter);
+$md5Folder = md5($folder);
 
 // Check the folder exists
 if(file_exists($path)){
 
 	// Include required js and css files
-	$doc = JFactory::getDocument();
-	$doc->addScript('modules/mod_downloads/assets/js/actions.js');
+	//$doc = JFactory::getDocument();
+	//$doc->addScript('modules/mod_downloads/assets/js/actions.js');
 
 	// Find current full url
 	$uri = JUri::getInstance() and $uri = $uri->toString();
@@ -48,42 +49,41 @@ if(file_exists($path)){
 	// Loop in extra info
 	$newFiles = [];
 	foreach($files as $file){
-	$src = $path . $file;
-	$size = filesize($src);
-	$newFiles[md5($file)] = (object) ['name' => $file, 'size' => formatBytes($size)];
+		$src = $path . $file;
+		$size = filesize($src);
+		$newFiles[md5($file)] = (object) ['name' => $file, 'size' => formatBytes($size)];
 	}
 
 	// Check for post data
 	if($email = JRequest::getVar('email', false, 'post')){
 
-	// Check honeypot
-	if( ! empty($_POST['birthday']) ){
-		return true;
-	}
+		// Check honeypot
+		if( ! empty($_POST['birthday']) ){
+			return true;
+		}
 
-	// Save to database
-	DownloadsHelperDatabase::save(
-		array(
-		'name'     => JRequest::getVar('name', false, 'post'),
-		'email'    => JRequest::getVar('email', false, 'post'),
-		'filename' => JRequest::getVar('filename', false, 'post')
-		)
-	);
+		// Save to database
+		DownloadsHelperDatabase::save([
+				'name'     => JRequest::getVar('name', false, 'post'),
+				'email'    => JRequest::getVar('email', false, 'post'),
+				'filename' => JRequest::getVar('filename', false, 'post')
+			]
+		);
 
-	// Validate email
-	if(filter_var(JRequest::getVar('email'), FILTER_VALIDATE_EMAIL) === false){
-		throw new Exception('Required data invalid', 403);
-	}
+		// Validate email
+		if(filter_var(JRequest::getVar('email'), FILTER_VALIDATE_EMAIL) === false){
+			throw new Exception('Required data invalid', 403);
+		}
 
-	// Get flename
-	if($filename = JRequest::getVar('filename', false, 'post')){
-		header("Location: ".JUri::base()."images/".$folder."/".$filename);
-		die();
-	}
+		// Get flename
+		if($filename = JRequest::getVar('filename', false, 'post')){
+			header("Location: ".JUri::base()."images/".$folder."/".$filename);
+			die();
+		}
 	}
 
 	// Display data
 	if(count($newFiles)){
-	require JModuleHelper::getLayoutPath('mod_downloads', 'default');
+		require JModuleHelper::getLayoutPath('mod_downloads', 'default');
 	}
 }
