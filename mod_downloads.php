@@ -21,79 +21,69 @@ $folder = $params->get('folder');
 $text   = $params->get('text');
 
 // Load vendor and helper files
-include 'libraries/vendor/autoload.php';
-include 'helpers/database.php';
+include_once 'libraries/vendor/autoload.php';
+include_once 'helpers/database.php';
+include_once 'helpers/format.php';
 
 // Gather file list
 $path = 'images'.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
 $filter = implode('|', $filter);
+$md5Folder = md5($folder);
 
 // Check the folder exists
 if(file_exists($path)){
 
-  // Include required js and css files
-  $doc = JFactory::getDocument();
-  $doc->addScript('modules/mod_downloads/assets/js/actions.js');
+	// Include required js and css files
+	//$doc = JFactory::getDocument();
+	//$doc->addScript('modules/mod_downloads/assets/js/actions.js');
 
-  // Find current full url
-  $uri = JUri::getInstance() and $uri = $uri->toString();
+	// Find current full url
+	$uri = JUri::getInstance() and $uri = $uri->toString();
 
-  // Joomla doesn't autoload JFile and JFolder
-  JLoader::register('JFolder', JPATH_LIBRARIES . '/joomla/filesystem/folder.php');
-  
-  // Pull the files
-  $files = JFolder::files($path, $filter);
+	// Joomla doesn't autoload JFile and JFolder
+	JLoader::register('JFolder', JPATH_LIBRARIES . '/joomla/filesystem/folder.php');
+	
+	// Pull the files
+	$files = JFolder::files($path, $filter);
 
-  // Loop in extra info
-  $newFiles = [];
-  foreach($files as $file){
-    $src = $path . $file;
-    $size = filesize($src);
-    $newFiles[md5($file)] = (object) ['name' => $file, 'size' => formatBytes($size)];
-  }
+	// Loop in extra info
+	$newFiles = [];
+	foreach($files as $file){
+		$src = $path . $file;
+		$size = filesize($src);
+		$newFiles[md5($file)] = (object) ['name' => $file, 'size' => formatBytes($size)];
+	}
 
-  // Check for post data
-  if($email = JRequest::getVar('email', false, 'post')){
+	// Check for post data
+	if($email = JRequest::getVar('email', false, 'post')){
 
-    // Check honeypot
-    if( ! empty($_POST['birthday']) ){
-      return true;
-    }
+		// Check honeypot
+		if( ! empty($_POST['birthday']) ){
+			return true;
+		}
 
-    // Save to database
-    DownloadsHelperDatabase::save(
-      array(
-        'name'     => JRequest::getVar('name', false, 'post'),
-        'email'    => JRequest::getVar('email', false, 'post'),
-        'filename' => JRequest::getVar('filename', false, 'post')
-      )
-    );
+		// Save to database
+		DownloadsHelperDatabase::save([
+				'name'     => JRequest::getVar('name', false, 'post'),
+				'email'    => JRequest::getVar('email', false, 'post'),
+				'filename' => JRequest::getVar('filename', false, 'post')
+			]
+		);
 
-    // Validate email
-    if(filter_var(JRequest::getVar('email'), FILTER_VALIDATE_EMAIL) === false){
-      throw new Exception('Required data invalid', 403);
-    }
+		// Validate email
+		if(filter_var(JRequest::getVar('email'), FILTER_VALIDATE_EMAIL) === false){
+			throw new Exception('Required data invalid', 403);
+		}
 
-    // Get flename
-    if($filename = JRequest::getVar('filename', false, 'post')){
-      header("Location: ".JUri::base()."images/".$folder."/".$filename);
-      die();
-    }
-  }
+		// Get flename
+		if($filename = JRequest::getVar('filename', false, 'post')){
+			header("Location: ".JUri::base()."images/".$folder."/".$filename);
+			die();
+		}
+	}
 
-  // Display data
-  if(count($newFiles)){
-    require JModuleHelper::getLayoutPath('mod_downloads', 'default');
-  }
-}
-
-/**
- * Get friendly file size
- *
- * http://php.net/manual/en/function.filesize.phpuser contributed example
- */
-function formatBytes($bytes, $decimals = 2) { 
-  $sz = 'BKMGTP';
-  $factor = floor((strlen($bytes) - 1) / 3);
-  return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+	// Display data
+	if(count($newFiles)){
+		require JModuleHelper::getLayoutPath('mod_downloads', 'default');
+	}
 }
