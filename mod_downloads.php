@@ -19,6 +19,8 @@ use Fuel\Validation\Validator;
 $filter = $params->get('types', array('.pdf', '.docx', '.xlsx', '.pptx', '.doc', '.xls', '.ppt'));
 $folder = $params->get('folder');
 $text   = $params->get('text');
+$asList = $params->get('asList') ? true : false;
+$header = $params->get('header');
 
 // Load vendor and helper files
 include_once 'libraries/vendor/autoload.php';

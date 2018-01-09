@@ -26,10 +26,21 @@
           required="required"
         />
         <field
+          name="header"
+          type="text"
+          label="Header"
+          description="Heading"
+        />
+        <field
           name="text"
           type="textarea"
           label="Text"
           description="Text below downloads"
+        />
+        <field 
+          name="asList"
+          type="checkbox"
+          label="Show as a list"
         />
       </fieldset>
     </fields>
