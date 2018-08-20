@@ -117,6 +117,10 @@
 		// Setup click to submit the form and download the file
 		jQuery('#<?= $md5Folder ?>.download.link').click(function(e){
 
+			// Stop
+			e.preventDefault();
+			e.stopPropagation();
+
 			// Find file name
 			var thisFileName = jQuery(this).data('filename');
 
